@@ -1,0 +1,87 @@
+/* Products.css */
+
+/* General Styling */
+.all-products-heading {
+    margin-top: 20px; /* Top margin */
+    font-size: 2.5rem; /* Font size */
+    font-weight: bold; /* Bold text */
+    text-align: center; /* Center alignment */
+    color: #333; /* Text color */
+    text-transform: uppercase; /* Make text uppercase */
+    letter-spacing: 2px; /* Add spacing between letters */
+    margin-bottom: 30px; /* Space below the heading */
+  }
+.product-store {
+    background-color: #f9f9f9;
+    padding: 20px;
+  }
+  
+  .product-store h1 {
+    font-size: 2rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  
+  /* Card Styling */
+  .card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+  }
+  
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+    background-color: #fff;
+  }
+  
+  .card-img-top {
+    object-fit: contain;
+    height: 200px;
+    background-color: #f4f4f4;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  /* Card Body */
+  .card-body {
+    padding: 15px;
+    text-align: center;
+  }
+  
+  .card-title {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+  }
+  
+  .card-title:hover {
+    color: #007bff;
+  }
+  
+  .card-text {
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 15px;
+  }
+  
+  /* Button */
+  .btn-primary {
+    background-color: #007bff;
+    border: none;
+    padding: 10px 15px;
+    color: #fff;
+    border-radius: 4px;
+    font-size: 14px;
+    text-transform: uppercase;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  .btn-primary:hover {
+    background-color: #0056b3;
+    color: #f4f4f4;
+  }
+  
