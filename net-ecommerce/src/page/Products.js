@@ -81,7 +81,7 @@ function Products() {
 
   useEffect(() => {
     axios
-      .get('https://fakestoreapi.com/products')
+      .get('http://127.0.0.1:8000/api/products/')
       .then((response) => {
         setProducts(response.data);
         setLoading(false);
@@ -107,13 +107,13 @@ function Products() {
               <div className="col-md-4 col-sm-6 mb-4" key={product.id}>
                 <div className="card h-100">
                   <img
-                    src={product.image}
+                    src={product.image_url}
                     className="card-img-top"
                     alt={product.title}
                     style={{ objectFit: 'contain', height: '200px' }}
                   />
                   <div className="card-body">
-                    <h5 className="card-title">{product.title}</h5>
+                    <h5 className="card-title">{product.name}</h5>
                     <p className="card-text">${product.price}</p>
                     <button
                       className="btn btn-primary"

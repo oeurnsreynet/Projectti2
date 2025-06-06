@@ -37,11 +37,9 @@ class OrderController extends Controller
             'shipping' => 'required|numeric',
             'total' => 'required|numeric',
             'order_date' => 'nullable|date',
-            'items' => 'required|array|min:1',
-            'items.*.product_id' => 'required|exists:products,id',
-            'items.*.quantity' => 'required|integer|min:1',
-            'items.*.price' => 'required|numeric',
         ]);
+
+        // dd($request->all());
 
         $order = Order::create([
             'name' => $request->name,
@@ -55,14 +53,6 @@ class OrderController extends Controller
             'order_date' => $request->order_date ?? now(),
         ]);
 
-        foreach ($request->items as $item) {
-            $order->items()->create([
-                'product_id' => $item['product_id'],
-                'quantity' => $item['quantity'],
-                'price' => $item['price'],
-            ]);
-        }
-
-        return response()->json($order->load('items.product'), 201);
+        return response()->json($order, 201);
     }
 }

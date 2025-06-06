@@ -57,7 +57,6 @@ const Product = () => {
     description: "",
   });
 
-  // Fetch products
   const fetchProducts = async () => {
     try {
       setLoading(true);
@@ -71,7 +70,6 @@ const Product = () => {
     }
   };
 
-  // Fetch categories for dropdown
   const fetchCategories = async () => {
     try {
       const res = await fetch("http://127.0.0.1:8000/api/categories/");
@@ -169,19 +167,21 @@ const Product = () => {
       form.append("price", formData.price);
       form.append("description", formData.description);
       if (formData.image) form.append("image", formData.image);
+      form.append("_method", "PUT");
 
-      const res = await fetch(`http://127.0.0.1:8000/api/products/product/product{id}`, {
-        method: "POST", // Laravel expects POST + _method=PUT
-        headers: {
-          Accept: "application/json",
-        },
-        body: (() => {
-          form.append("_method", "PUT");
-          return form;
-        })(),
-      });
+      const res = await fetch(
+        `http://127.0.0.1:8000/api/products/${selectedProductId}`,
+        {
+          method: "POST", // Laravel expects POST with _method for PUT
+          body: form,
+        }
+      );
 
-      if (!res.ok) throw new Error("Failed to update product");
+      if (!res.ok) {
+        const error = await res.json();
+        console.error(error);
+        throw new Error("Failed to update product");
+      }
 
       await fetchProducts();
       handleClose();

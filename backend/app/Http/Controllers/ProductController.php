@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UpdateProductRequest;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -52,7 +53,8 @@ class ProductController extends Controller
     }
 
     public function update(Request $request, $id)
-    {
+    {  
+        // dd($id);
         $product = Product::find($id);
         if (!$product) {
             return response()->json(['error' => 'Product not found'], 404);

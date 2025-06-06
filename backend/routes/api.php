@@ -6,6 +6,7 @@ use App\Http\Controllers\SlideshowController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\OrderItemController;
 use App\Http\Controllers\AboutController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\ContactController;
@@ -47,7 +48,7 @@ Route::group(['middleware' => 'api', 'prefix' => 'products'], function () {
     Route::get('/category/{categoryName}', [ProductController::class, 'productsByCategory']);  // GET /api/products/category/{categoryName}
     Route::post('/product', [ProductController::class, 'store']);
     Route::get('/{id}', [ProductController::class, 'show']);
-    Route::put('/product{id}', [ProductController::class, 'update']);
+    Route::put('/{id}', [ProductController::class, 'update']);
     Route::delete('/{id}', [ProductController::class, 'destroy']);
 });
 
@@ -56,6 +57,15 @@ Route::group(['middleware' => 'api', 'prefix' => 'orders'], function () {
     Route::post('/order', [OrderController::class, 'store']);
     Route::get('/', [OrderController::class, 'index']);
     Route::get('/{id}', [OrderController::class, 'show']);
+});
+
+Route::group(['middleware' => 'api', 'prefix' => 'order-items'], function () {
+    Route::post('/', [OrderItemController::class, 'store']);
+    Route::get('/', [OrderItemController::class, 'index']);
+    Route::get('/{id}', [OrderItemController::class, 'show']);
+    Route::put('/{id}', [OrderItemController::class, 'update']);
+    Route::delete('/{id}', [OrderItemController::class, 'destroy']);
+    Route::get('/order/{orderId}', [OrderItemController::class, 'getTotalPrice']);
 });
 
 // About Routes

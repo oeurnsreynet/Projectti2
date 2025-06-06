@@ -6,7 +6,7 @@ function Blog() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch('https://fakestoreapi.com/products/category/jewelery?limit=3') // Fetch 3 products
+        fetch('http://127.0.0.1:8000/api/blogs/') // Fetch 3 products
             .then((response) => response.json())
             .then((data) => {
                 setProducts(data);
@@ -39,7 +39,7 @@ function Blog() {
                                 <div className="card border-none me-3">
                                     <div className="card-image">
                                         <img
-                                            src={product.image}
+                                            src={product.image_url}
                                             alt={product.title}
                                             className="img-fluid"
                                             style={{ maxHeight: '200px', objectFit: 'contain' }}
@@ -47,8 +47,8 @@ function Blog() {
                                     </div>
                                     <div className="card-body text-uppercase">
                                         <div className="card-meta text-muted">
-                                            <span className="meta-date">Feb 22, 2023</span>
-                                            <span className="meta-category">- Jewelery</span>
+                                            <span className="meta-date"></span>
+                                            <span className="meta-category"></span>
                                         </div>
                                         <h3 className="card-title">
                                             <a href="#">{product.title}</a>

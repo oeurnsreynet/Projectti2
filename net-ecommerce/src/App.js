@@ -1,8 +1,8 @@
 import logo from './logo.svg';
 import './App.css';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { PayPalScriptProvider } from "@paypal/react-paypal-js";
 import Homepage from './page/Homepage';
+
 
 
 import About from './page/About';
@@ -10,7 +10,10 @@ import Products from './page/Products';
 import Cart from './page/Cart';
 import { CartProvider } from "./context/CartContext";
 import { UserProvider } from "./context/UserContext";
+import Checkout from './page/Checkout';
 import Contact from './page/Contact';
+
+
 
 function App() {
   return (
@@ -35,6 +38,7 @@ function App() {
            <Route path='/products' element={<Products/>}/> 
            <Route path='/cart' element={<Cart/>}/>
            <Route path='/contact' element={<Contact/>}/>
+           <Route path='/checkout' element={<Checkout/>}/>
           </Routes>
         </Router>
         </UserProvider>

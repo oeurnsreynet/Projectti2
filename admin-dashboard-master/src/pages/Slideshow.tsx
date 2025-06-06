@@ -34,6 +34,7 @@ const Slideshow = () => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   const [newSlide, setNewSlide] = useState({
     title: "",
@@ -63,7 +64,18 @@ const Slideshow = () => {
     fetchSlides();
   }, []);
 
-  const handleOpen = () => setOpen(true);
+  const handleOpen = () => {
+    setOpen(true);
+    setEditingId(null);
+    setNewSlide({
+      title: "",
+      description: "",
+      image: null,
+      link: "",
+      ssorder: 1,
+    });
+    setPreviewImage(null);
+  };
 
   const handleClose = () => {
     setOpen(false);
@@ -75,16 +87,19 @@ const Slideshow = () => {
       link: "",
       ssorder: 1,
     });
+    setPreviewImage(null);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setNewSlide({ ...newSlide, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setNewSlide({ ...newSlide, [name]: name === "ssorder" ? parseInt(value) : value });
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setNewSlide({ ...newSlide, image: file });
+      setPreviewImage(null); // clear old preview
     }
   };
 
@@ -97,6 +112,7 @@ const Slideshow = () => {
       ssorder: slide.ssorder,
     });
     setEditingId(slide.id);
+    setPreviewImage(slide.image_url);
     setOpen(true);
   };
 
@@ -133,17 +149,19 @@ const Slideshow = () => {
 
       const url = editingId
         ? `http://127.0.0.1:8000/api/slideshows/slideshow/${editingId}`
-        : "http://127.0.0.1:8000/api/slideshows/slideshow{id}";
-      const method = editingId ? "POST" : "POST"; // Change to PUT/PATCH if your backend supports it
+        : "http://127.0.0.1:8000/api/slideshows/slideshow";
+
+      const method = editingId ? "POST" : "POST"; // Adjust to "PUT" if your backend uses PUT
 
       const response = await fetch(url, {
-        method,
+        method: method,
         body: formData,
       });
 
-      if (!response.ok) {
-        const errData = await response.json();
-        throw new Error(errData.message || "Failed to save slide");
+      const contentType = response.headers.get("Content-Type");
+      if (!response.ok || !contentType?.includes("application/json")) {
+        const text = await response.text();
+        throw new Error(`Unexpected response: ${text}`);
       }
 
       const result = await response.json();
@@ -207,8 +225,8 @@ const Slideshow = () => {
                   <IconButton color="primary" onClick={() => handleEdit(slide)} sx={{ mr: 1 }}>
                     <Edit />
                   </IconButton>
-                  <IconButton color="error"  onClick={() => handleDelete(slide.id)}>
-                   <Delete />
+                  <IconButton color="error" onClick={() => handleDelete(slide.id)}>
+                    <Delete />
                   </IconButton>
                 </TableCell>
               </TableRow>
@@ -242,7 +260,8 @@ const Slideshow = () => {
             Choose Image
             <input type="file" accept="image/*" hidden onChange={handleImageChange} />
           </Button>
-          {newSlide.image && (
+
+          {newSlide.image ? (
             <Box mt={2}>
               <Typography variant="body2">Selected Image:</Typography>
               <img
@@ -251,8 +270,16 @@ const Slideshow = () => {
                 style={{ width: 200, height: 200, borderRadius: 4 }}
               />
             </Box>
+          ) : previewImage && (
+            <Box mt={2}>
+              <Typography variant="body2">Current Image:</Typography>
+              <img
+                src={previewImage}
+                alt="Current"
+                style={{ width: 200, height: 200, borderRadius: 4 }}
+              />
+            </Box>
           )}
-          
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>

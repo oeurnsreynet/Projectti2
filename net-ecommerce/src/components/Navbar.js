@@ -7,12 +7,6 @@ import { useCart } from '../context/CartContext';
 
 function Navbar() {
   const { cartItems } = useCart();
-  // const { getCartCount } = useCart();
-  const [cartCount, setCartCount] = useState(0);
-  useEffect(() => {
-    // Update cart count whenever the cart changes
-    // setCartCount(getCartCount());
-  }, []);
     return (
         <>
         <div className="search-popup">
@@ -106,7 +100,7 @@ function Navbar() {
                     <Link to={'/'} className="nav-link me-4 active" href="#billboard">Home</Link>
                   </li>
                   <li className="nav-item">
-                    <a className="nav-link me-4" href="#company-services">Services</a>
+                    <Link to={'/'} className="nav-link me-4" href="services">Services</Link>
                   </li>
                   <li className="nav-item">
                     <a className="nav-link me-4" href="#mobile-products">Phone</a>

@@ -29,12 +29,11 @@ type AboutData = {
 const About = () => {
   const [abouts, setAbouts] = useState<AboutData[]>([]);
   const [open, setOpen] = useState(false);
-  const [newAbout, setNewAbout] = useState({
-    title: "",
-    content: "",
-  });
+  const [newAbout, setNewAbout] = useState({ title: "", content: "" });
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingId, setEditingId] = useState<number | null>(null);
 
   const fetchAbouts = async () => {
     try {
@@ -56,9 +55,9 @@ const About = () => {
     setOpen(false);
     setNewAbout({ title: "", content: "" });
     setImageFile(null);
-    if (previewUrl) {
-      URL.revokeObjectURL(previewUrl); // Clean up preview URL
-    }
+    setIsEditing(false);
+    setEditingId(null);
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
     setPreviewUrl(null);
   };
 
@@ -70,39 +69,48 @@ const About = () => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
       setImageFile(file);
-      if (previewUrl) {
-        URL.revokeObjectURL(previewUrl); // revoke old url
-      }
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
       setPreviewUrl(URL.createObjectURL(file));
     }
   };
 
-  const handleAddAbout = async () => {
+  const handleAddOrUpdateAbout = async () => {
     try {
       const formData = new FormData();
       formData.append("title", newAbout.title);
       formData.append("content", newAbout.content);
       if (imageFile) formData.append("image", imageFile);
+      if (isEditing) formData.append("_method", "PUT"); // Laravel expects this for updates
 
-      const response = await fetch("http://127.0.0.1:8000/api/abouts/about", {
+      const url = isEditing
+        ? `http://127.0.0.1:8000/api/abouts/${editingId}`
+        : "http://127.0.0.1:8000/api/abouts/about";
+
+      const response = await fetch(url, {
         method: "POST",
         body: formData,
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to add about");
+        const text = await response.text(); // parse as text, not JSON
+        throw new Error(text || "Failed to submit form");
       }
 
-      const createdAbout = await response.json();
-      setAbouts([...abouts, createdAbout]);
+      await fetchAbouts();
       handleClose();
     } catch (error: unknown) {
-      console.error("Error creating about:", error);
-      const errorMessage =
-        error instanceof Error ? error.message : "Unknown error";
-      alert("Failed to create about: " + errorMessage);
+      console.error("Error submitting form:", error);
+      const errorMessage = error instanceof Error ? error.message : "Unknown error";
+      alert("Failed to submit: " + errorMessage);
     }
+  };
+
+  const handleEditAbout = (about: AboutData) => {
+    setIsEditing(true);
+    setEditingId(about.id);
+    setNewAbout({ title: about.title, content: about.content });
+    setPreviewUrl(about.image_url || null);
+    setOpen(true);
   };
 
   const handleDeleteAbout = async (id: number) => {
@@ -152,7 +160,7 @@ const About = () => {
                 <TableCell>{about.title}</TableCell>
                 <TableCell>{about.content}</TableCell>
                 <TableCell>
-                  <IconButton color="primary" onClick={() => alert("Edit not implemented yet")}>
+                  <IconButton color="primary" onClick={() => handleEditAbout(about)}>
                     <Edit />
                   </IconButton>
                   <IconButton color="error" onClick={() => handleDeleteAbout(about.id)}>
@@ -166,7 +174,7 @@ const About = () => {
       </TableContainer>
 
       <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
-        <DialogTitle>Add About</DialogTitle>
+        <DialogTitle>{isEditing ? "Edit About" : "Add About"}</DialogTitle>
         <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}>
           <TextField
             name="title"
@@ -195,8 +203,8 @@ const About = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button variant="contained" onClick={handleAddAbout}>
-            Add
+          <Button variant="contained" onClick={handleAddOrUpdateAbout}>
+            {isEditing ? "Update" : "Add"}
           </Button>
         </DialogActions>
       </Dialog>
